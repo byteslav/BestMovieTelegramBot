@@ -1,4 +1,6 @@
-﻿using Telegram.Bot.Types.ReplyMarkups;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BestMovie.BLL
 {
@@ -13,13 +15,10 @@ namespace BestMovie.BLL
             });
         }
         
-        public static ReplyKeyboardMarkup GetGenresKeyboard()
+        public static ReplyKeyboardMarkup GetGenresKeyboard(IEnumerable<string> genreCollection)
         {
-            return new ReplyKeyboardMarkup(new[]
-            {
-                new KeyboardButton("Comedy"),                  
-                new KeyboardButton("Drama")
-            });
+            var keyboard = genreCollection.Select(genre => new KeyboardButton(genre));
+            return new ReplyKeyboardMarkup(keyboard);
         }
     }
 }

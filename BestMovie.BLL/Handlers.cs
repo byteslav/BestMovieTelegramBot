@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using BestMovie.Parser.Core;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using static BestMovie.Entities.Movie;
 
 namespace BestMovie.BLL
 {
@@ -29,44 +26,36 @@ namespace BestMovie.BLL
         {
             var message = update.Message;
             if (message == null) return;
-
+            
             var chatId = message.Chat.Id;
-    
-            Console.WriteLine($"Received a '{message.Text}' message in chat {chatId}.");
-
-            switch (message.Text.ToLower())
+            var textMessage = message.Text.ToLower();
+            
+            Console.WriteLine($"Received a '{textMessage}' message in chat {chatId}.");
+            
+            var messageBuilder = new MessageBuilder();
+            if (textMessage == "start")
             {
-                case "start":
-                    await botClient.SendTextMessageAsync(
-                        chatId: chatId,
-                        text:   "Choose movie genre", 
-                        cancellationToken: cancellationToken,
-                        replyMarkup: Keyboards.GetGenresKeyboard());
-                    break;
-                case "what can you do?":
-                    await botClient.SendTextMessageAsync(
-                        chatId: chatId,
-                        text:   "Bot info",
-                        cancellationToken: cancellationToken,
-                        replyMarkup: Keyboards.GetMainKeyboard());
-                    break;
-                default:
-                    await botClient.SendTextMessageAsync(
-                        chatId: chatId,
-                        text:   "I can't resolve this phrase", 
-                        cancellationToken: cancellationToken,
-                        replyMarkup: Keyboards.GetMainKeyboard());
-                    break;
+                var text = "Choose movie genre";
+                var keyboard = Keyboards.GetGenresKeyboard(GenresCollection.Genres);
+                await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, keyboard);
             }
-        }
+            else if (textMessage == "what can you do?")
+            {
+                var text = "Bot info";
+                await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, Keyboards.GetMainKeyboard());
 
-        public static async void GetMoviesByGenre(string genre)
-        {
-            var parser = new ParserService<IEnumerable<MovieListElement>>(
-                new Parser.Core.Parser(),
-                new Settings(genre));
-
-            var test = await parser.GetMoviesCollection();
+            }
+            else if (GenresCollection.Genres.Contains(textMessage))
+            {
+                var text = "Please wait...";
+                await messageBuilder.SendMoviesByCategory(botClient, chatId, textMessage, text,
+                    cancellationToken, Keyboards.GetMainKeyboard());
+            }
+            else
+            {
+                var text = "I can't resolve this phrase...";
+                await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, Keyboards.GetMainKeyboard());
+            }
         }
     }
 }

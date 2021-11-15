@@ -12,7 +12,7 @@ namespace BestMovie.Parser.Core
         public HtmlLoader(IParserSettings settings)
         {
             _httpClient = new HttpClient();
-            _url = $"{settings.BaseUrl}/{settings.Genre}/{settings.Prefix}";
+            _url = $"{settings.BaseUrl}/{settings.Genre}{settings.Prefix}";
         }
 
         public async Task<string> GetSourceByGenre(string genre)

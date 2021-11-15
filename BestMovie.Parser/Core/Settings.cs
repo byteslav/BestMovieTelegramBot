@@ -8,7 +8,7 @@
         }
         public string BaseUrl { get; set; } =
             "https://www.ivi.ru/movies/";
-        public string Prefix { get; set; } = "";
+        public string Prefix { get; set; } = "?ivi_rating_10_gte=9";
         public string Genre { get; set; }
     }
 }
