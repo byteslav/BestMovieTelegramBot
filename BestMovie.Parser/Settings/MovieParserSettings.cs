@@ -9,7 +9,7 @@ namespace BestMovie.Parser.Settings
             Genre = genre;
         }
         public string BaseUrl { get; set; } =
-            "https://www.ivi.ru/movies/";
+            "https://www.ivi.ru";
         public string Prefix { get; set; } = "?ivi_rating_10_gte=9";
         public string Genre { get; set; }
     }

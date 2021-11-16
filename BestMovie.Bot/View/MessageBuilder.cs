@@ -15,8 +15,9 @@ namespace BestMovie.Bot.View
     public class MessageBuilder
     {
         public async Task SendMessage(ITelegramBotClient botClient, long chatId,
-            string text, CancellationToken cancellationToken, ReplyKeyboardMarkup keyboard)
+            string text, CancellationToken cancellationToken, ReplyKeyboardMarkup keyboard = null)
         {
+            //keyboard ??= Keyboards.GetMainKeyboard();
             var result = await botClient.SendTextMessageAsync(
                 chatId: chatId,
                 text:   text, 
@@ -24,20 +25,28 @@ namespace BestMovie.Bot.View
                 replyMarkup: keyboard);
         }
         
-        public async Task SendMoviesByCategory(ITelegramBotClient botClient, long chatId, string genre,
-            string text, CancellationToken cancellationToken, ReplyKeyboardMarkup keyboard)
+        public async Task SendGenresByCategory(ITelegramBotClient botClient, long chatId, string category,
+            string text, IEnumerable<Genre> collection, CancellationToken cancellationToken)
         {
-            await SendMessage(botClient, chatId, text, cancellationToken, keyboard);
-            
-            var collection = await GetMoviesByGenre(genre);
+            await SendMessage(botClient, chatId, text, cancellationToken);
+
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
-                text:   ConvertCollectionToString(collection, genre),
+                text: ConvertCollectionGenreMessage(collection),
+                cancellationToken: cancellationToken);
+        }
+        
+        public async Task SendMoviesByGenre(ITelegramBotClient botClient, long chatId, string genre,
+            IEnumerable<MovieListElement> collection, CancellationToken cancellationToken, ReplyKeyboardMarkup keyboard)
+        {
+            await botClient.SendTextMessageAsync(
+                chatId: chatId,
+                text:   ConvertCollectionMovieMessage(collection, genre),
                 cancellationToken: cancellationToken,
                 replyMarkup: keyboard);
         }
         
-        private string ConvertCollectionToString(IEnumerable<MovieListElement> collection, string genre)
+        private string ConvertCollectionMovieMessage(IEnumerable<MovieListElement> collection, string genre)
         {
             var result = new StringBuilder($"Best movies by genre {genre}: \n");
             foreach (var item in collection)
@@ -49,24 +58,15 @@ namespace BestMovie.Bot.View
             return result.ToString();
         }
         
-        private async Task<IEnumerable<MovieListElement>> GetMoviesByGenre(string genre)
+        private string ConvertCollectionGenreMessage(IEnumerable<Genre> collection)
         {
-            var parser = new MovieService<IEnumerable<MovieListElement>>(
-                new MovieParser(),
-                new MovieParserSettings(genre));
+            var result = new StringBuilder();
+            foreach (var item in collection)
+            {
+                result.Append($"/{item.Name} \n");
+            }
 
-            var moviesCollection = await parser.GetMoviesCollection();
-            return moviesCollection;
-        }
-        
-        private async Task<IEnumerable<Genre>> GetGenre(string category)
-        {
-            var parser = new GenreService<IEnumerable<Genre>>(
-                new GenreParser(),
-                new GenreParserSettings(category));
-            
-            var genresCollection = await parser.GetGenresCollection();
-            return genresCollection;
+            return result.ToString();
         }
     }
 }

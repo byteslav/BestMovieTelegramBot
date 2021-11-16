@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using BestMovie.Entities;
 
 namespace BestMovie.BLL
 {
     public static class GenresCollection
     {
-        public static List<string> Genres => new() { "comedy", "drama", "thriller", "adventures" };
+        public static List<Genre> Genres { get; set; }
     }
 }

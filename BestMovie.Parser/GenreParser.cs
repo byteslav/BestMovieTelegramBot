@@ -14,9 +14,8 @@ namespace BestMovie.Parser
         {
             var items = document.QuerySelectorAll("a")
                 .Where(i => i.ClassName == "gallery__nbl-tile nbl-tile nbl-tile_type_compact nbl-tile_style_aratus nbl-tile_hasAvatar_0 nbl-tile_hasIcon_1");
-            // var result = test.Select(item => item.GetAttribute("href"));
-            // var names = test.Select(item => item.TextContent);
-            var genres = items.Select(genre => new Genre { UrlPrefix = genre.GetAttribute("href"), Name = genre.TextContent });
+            var genres = items.Select(genre => new Genre { UrlPrefix = genre.GetAttribute("href"), Name = genre.TextContent }).ToList();
+            genres.Remove(genres.Last());
             return genres;
         }
     }
