@@ -1,15 +1,16 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using BestMovie.Parser.Interfaces;
 
-namespace BestMovie.Parser.Core
+namespace BestMovie.Parser.HtmlLoader
 {
-    public class HtmlLoader
+    public class HtmlMovieLoader
     {
         private readonly HttpClient _httpClient;
         private readonly string _url;
 
-        public HtmlLoader(IParserSettings settings)
+        public HtmlMovieLoader(IMovieParserSettings settings)
         {
             _httpClient = new HttpClient();
             _url = $"{settings.BaseUrl}/{settings.Genre}{settings.Prefix}";

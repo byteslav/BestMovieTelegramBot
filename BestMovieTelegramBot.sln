@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMovie", "BestMovie/BestMovie.csproj", "{764319BE-C60D-4D14-A892-FEA977B14299}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMovie.Bot", "BestMovie.Bot\BestMovie.Bot.csproj", "{764319BE-C60D-4D14-A892-FEA977B14299}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BestMovie.BLL", "BestMovie.BLL\BestMovie.BLL.csproj", "{C76E98FF-C673-488F-A0EC-4B319DDF0E46}"
 EndProject

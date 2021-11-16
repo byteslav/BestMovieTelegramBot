@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using BestMovie.BLL;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 
-namespace BestMovie.BLL
+namespace BestMovie.Bot.View
 {
     public static class Handlers
     {
@@ -43,7 +44,6 @@ namespace BestMovie.BLL
             {
                 var text = "Bot info";
                 await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, Keyboards.GetMainKeyboard());
-
             }
             else if (GenresCollection.Genres.Contains(textMessage))
             {

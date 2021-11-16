@@ -2,12 +2,15 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using BestMovie.Parser.Core;
+using BestMovie.BLL.Services;
+using BestMovie.Entities;
+using BestMovie.Parser;
+using BestMovie.Parser.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 using static BestMovie.Entities.Movie;
 
-namespace BestMovie.BLL
+namespace BestMovie.Bot.View
 {
     public class MessageBuilder
     {
@@ -34,16 +37,6 @@ namespace BestMovie.BLL
                 replyMarkup: keyboard);
         }
         
-        private async Task<IEnumerable<MovieListElement>> GetMoviesByGenre(string genre)
-        {
-            var parser = new ParserService<IEnumerable<MovieListElement>>(
-                new HtmlParser(),
-                new Settings(genre));
-
-            var moviesCollection = await parser.GetMoviesCollection();
-            return moviesCollection;
-        }
-        
         private string ConvertCollectionToString(IEnumerable<MovieListElement> collection, string genre)
         {
             var result = new StringBuilder($"Best movies by genre {genre}: \n");
@@ -54,6 +47,26 @@ namespace BestMovie.BLL
             }
 
             return result.ToString();
+        }
+        
+        private async Task<IEnumerable<MovieListElement>> GetMoviesByGenre(string genre)
+        {
+            var parser = new MovieService<IEnumerable<MovieListElement>>(
+                new MovieParser(),
+                new MovieParserSettings(genre));
+
+            var moviesCollection = await parser.GetMoviesCollection();
+            return moviesCollection;
+        }
+        
+        private async Task<IEnumerable<Genre>> GetGenre(string category)
+        {
+            var parser = new GenreService<IEnumerable<Genre>>(
+                new GenreParser(),
+                new GenreParserSettings(category));
+            
+            var genresCollection = await parser.GetGenresCollection();
+            return genresCollection;
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Linq;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace BestMovie.BLL
+namespace BestMovie.Bot.View
 {
     public static class Keyboards
     {

@@ -4,6 +4,6 @@ namespace BestMovie.BLL
 {
     public static class GenresCollection
     {
-        public static List<string> Genres => new List<string> { "comedy", "drama", "thriller" };
+        public static List<string> Genres => new() { "comedy", "drama", "thriller", "adventures" };
     }
 }

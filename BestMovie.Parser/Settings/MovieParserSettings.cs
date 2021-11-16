@@ -1,8 +1,10 @@
-﻿namespace BestMovie.Parser.Core
+﻿using BestMovie.Parser.Interfaces;
+
+namespace BestMovie.Parser.Settings
 {
-    public class Settings : IParserSettings
+    public class MovieParserSettings : IMovieParserSettings
     {
-        public Settings(string genre)
+        public MovieParserSettings(string genre)
         {
             Genre = genre;
         }

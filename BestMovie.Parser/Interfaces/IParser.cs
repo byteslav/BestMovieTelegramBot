@@ -1,8 +1,8 @@
 ﻿using AngleSharp.Html.Dom;
 
-namespace BestMovie.Parser.Core
+namespace BestMovie.Parser.Interfaces
 {
-    public interface IHtmlParser<T> where T: class
+    public interface IParser<T> where T: class
     {
         T Parse(IHtmlDocument document);
     }

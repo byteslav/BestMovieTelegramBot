@@ -1,6 +1,6 @@
-﻿namespace BestMovie.Parser.Core
+﻿namespace BestMovie.Parser.Interfaces
 {
-    public interface IParserSettings
+    public interface IMovieParserSettings
     {
         string BaseUrl { get; set; }
         string Prefix { get; set; }
