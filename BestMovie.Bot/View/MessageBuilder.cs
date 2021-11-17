@@ -48,7 +48,7 @@ namespace BestMovie.Bot.View
         
         private string ConvertCollectionMovieMessage(IEnumerable<MovieListElement> collection, string genre)
         {
-            var result = new StringBuilder($"Best movies by genre {genre}: \n");
+            var result = new StringBuilder(Messages.BestMovieByGenre);
             foreach (var item in collection)
             {
                 result.Append($"{item.Position}) ");
@@ -60,7 +60,7 @@ namespace BestMovie.Bot.View
         
         private string ConvertCollectionGenreMessage(IEnumerable<Genre> collection)
         {
-            var result = new StringBuilder();
+            var result = new StringBuilder("\n");
             foreach (var item in collection)
             {
                 result.Append($"/{item.Name} \n");

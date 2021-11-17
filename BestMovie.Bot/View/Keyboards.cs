@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BestMovie.Entities;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BestMovie.Bot.View
@@ -11,8 +12,8 @@ namespace BestMovie.Bot.View
         {
             return new ReplyKeyboardMarkup(new[]
             {
-                new KeyboardButton("What can you do?"),                  
-                new KeyboardButton("Start")
+                new KeyboardButton(Messages.BotInfoRequest),                  
+                new KeyboardButton(Messages.Start)
             });
         }
         

@@ -12,7 +12,11 @@ namespace BestMovie.Bot.View
 {
     public static class Handlers
     {
+        private static readonly MessageBuilder _messageBuilder = new MessageBuilder();
+        private static readonly GenreController _genreController = new GenreController();
+        private static readonly MovieController _movieController = new MovieController();
         private static List<Genre> _genres;
+        
         public static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             var errorMessage = exception switch
@@ -35,39 +39,35 @@ namespace BestMovie.Bot.View
             var textMessage = message.Text.ToLower();
 
 
-            Console.WriteLine($"Received a '{textMessage}' message in chat {chatId}.");
-            
-            var messageBuilder = new MessageBuilder();
-            var genreController = new GenreController();
-            var movieController = new MovieController();
+            Console.WriteLine(Messages.ConsoleHandleMessage, textMessage, chatId);
 
-            if (textMessage == "start")
+            if (textMessage == Messages.Start.ToLower())
             {
-                var text = "Please, wait...";
-                await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken);
-                _genres = await genreController.GetGenres("movies");
-                await messageBuilder.SendGenresByCategory(botClient, chatId, "movie", "Choose your movie genre: ", _genres,
+                var text = Messages.PleaseWait;
+                await _messageBuilder.SendMessage(botClient, chatId, text, cancellationToken);
+                _genres = await _genreController.GetGenres("movies");
+                await _messageBuilder.SendGenresByCategory(botClient, chatId, "movie", Messages.ChooseGenre, _genres,
                     cancellationToken);
             }
-            else if (textMessage == "what can you do?")
+            else if (textMessage == Messages.BotInfoRequest.ToLower())
             {
-                var text = "Bot info";
+                var text = Messages.BotInfoResponse;
                 var keyboard = Keyboards.GetMainKeyboard();
-                await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, keyboard);
+                await _messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, keyboard);
             }
             else if (_genres != null && _genres.Exists(genre => genre.Name.ToLower().Equals(textMessage)))
             {
-                var text = "Movies list is loading...";
-                await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken);
+                var text = Messages.MoviesIsLoading;
+                await _messageBuilder.SendMessage(botClient, chatId, text, cancellationToken);
                 var genre = _genres.Find(g => g.Name.ToLower().Equals(textMessage))?.UrlPrefix;
-                var collection = await movieController.GetMoviesByGenre(genre);
-                await messageBuilder.SendMoviesByGenre(botClient, chatId, textMessage,
+                var collection = await _movieController.GetMoviesByGenre(genre);
+                await _messageBuilder.SendMoviesByGenre(botClient, chatId, textMessage,
                     collection, cancellationToken, Keyboards.GetMainKeyboard());
             }
             else
             {
-                var text = "I can't resolve this phrase...";
-                await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, Keyboards.GetMainKeyboard());
+                var text = Messages.CantResolve;
+                await _messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, Keyboards.GetMainKeyboard());
             }
         }
     }
