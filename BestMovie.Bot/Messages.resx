@@ -31,7 +31,7 @@
         <value>Привет! Этот бот существует для того чтобы подобрать самый лучший фильм для тебя. Напиши "Начать" для старта</value>
     </data>
     <data name="ChooseGenre" xml:space="preserve">
-        <value>:fun: Выберите жанр фильма: </value>
+        <value>Выберите жанр фильма: </value>
     </data>
     <data name="PleaseWait" xml:space="preserve">
         <value>Пожалуйста подождите...</value>
@@ -43,6 +43,9 @@
         <value>К сожалению, я не могу разобрать эту фразу </value>
     </data>
     <data name="BestMovieByGenre" xml:space="preserve">
-        <value>Список лучших фильмов выбранного жанра!. Наслаждайтесь!</value>
+        <value>Список лучших фильмов выбранного жанра. Наслаждайтесь!</value>
+    </data>
+    <data name="GenreIsNotAvaliable" xml:space="preserve">
+        <value>Упс, этот список фильмов в данный момент недоступен</value>
     </data>
 </root>

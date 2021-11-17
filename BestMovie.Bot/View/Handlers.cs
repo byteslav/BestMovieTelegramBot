@@ -59,6 +59,7 @@ namespace BestMovie.Bot.View
             {
                 var text = Messages.MoviesIsLoading;
                 await _messageBuilder.SendMessage(botClient, chatId, text, cancellationToken);
+                
                 var genre = _genres.Find(g => g.Name.ToLower().Equals(textMessage))?.UrlPrefix;
                 var collection = await _movieController.GetMoviesByGenre(genre);
                 await _messageBuilder.SendMoviesByGenre(botClient, chatId, textMessage,
