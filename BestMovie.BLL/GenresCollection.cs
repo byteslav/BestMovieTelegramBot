@@ -5,6 +5,6 @@ namespace BestMovie.BLL
 {
     public static class GenresCollection
     {
-        public static List<Genre> Genres { get; set; }
+        //public static List<Genre> Genres { get; set; }
     }
 }

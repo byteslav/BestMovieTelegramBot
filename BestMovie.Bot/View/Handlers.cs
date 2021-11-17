@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BestMovie.BLL;
-using BestMovie.BLL.Services;
+using BestMovie.Bot.Controllers;
 using BestMovie.Entities;
-using BestMovie.Parser;
-using BestMovie.Parser.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using static BestMovie.Entities.Movie;
 
 namespace BestMovie.Bot.View
 {
     public static class Handlers
     {
+        private static List<Genre> _genres;
         public static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             var errorMessage = exception switch
@@ -42,12 +38,15 @@ namespace BestMovie.Bot.View
             Console.WriteLine($"Received a '{textMessage}' message in chat {chatId}.");
             
             var messageBuilder = new MessageBuilder();
+            var genreController = new GenreController();
+            var movieController = new MovieController();
+
             if (textMessage == "start")
             {
                 var text = "Please, wait...";
                 await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken);
-                GenresCollection.Genres = await GetGenres("movies");
-                await messageBuilder.SendGenresByCategory(botClient, chatId, "movie", "Choose your movie genre: ", GenresCollection.Genres,
+                _genres = await genreController.GetGenres("movies");
+                await messageBuilder.SendGenresByCategory(botClient, chatId, "movie", "Choose your movie genre: ", _genres,
                     cancellationToken);
             }
             else if (textMessage == "what can you do?")
@@ -56,12 +55,12 @@ namespace BestMovie.Bot.View
                 var keyboard = Keyboards.GetMainKeyboard();
                 await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, keyboard);
             }
-            else if (GenresCollection.Genres.Exists(genre => genre.Name.ToLower().Equals(textMessage)))
+            else if (_genres != null && _genres.Exists(genre => genre.Name.ToLower().Equals(textMessage)))
             {
                 var text = "Movies list is loading...";
                 await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken);
-                var genre = GenresCollection.Genres.Find(g => g.Name.ToLower().Equals(textMessage))?.UrlPrefix;
-                var collection = await GetMoviesByGenre(genre);
+                var genre = _genres.Find(g => g.Name.ToLower().Equals(textMessage))?.UrlPrefix;
+                var collection = await movieController.GetMoviesByGenre(genre);
                 await messageBuilder.SendMoviesByGenre(botClient, chatId, textMessage,
                     collection, cancellationToken, Keyboards.GetMainKeyboard());
             }
@@ -70,26 +69,6 @@ namespace BestMovie.Bot.View
                 var text = "I can't resolve this phrase...";
                 await messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, Keyboards.GetMainKeyboard());
             }
-        }
-        private static async Task<IEnumerable<MovieListElement>> GetMoviesByGenre(string genre)
-        {
-            var parser = new MovieService<IEnumerable<MovieListElement>>(
-                new MovieParser(),
-                new MovieParserSettings(genre));
-
-            var moviesCollection = await parser.GetMoviesCollection();
-            return moviesCollection;
-        }
-        
-        private static async Task<List<Genre>> GetGenres(string category)
-        {
-            var parser = new GenreService<IEnumerable<Genre>>(
-                new GenreParser(),
-                new GenreParserSettings(category));
-            
-            var genresCollection = await parser.GetGenresCollection();
-            var genresList = genresCollection.ToList();
-            return genresList;
         }
     }
 }

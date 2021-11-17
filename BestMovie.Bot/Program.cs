@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
-using BestMovie.BLL.Services;
 using BestMovie.Bot.View;
-using BestMovie.Entities;
-using BestMovie.Parser;
-using BestMovie.Parser.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Extensions.Polling;
 
