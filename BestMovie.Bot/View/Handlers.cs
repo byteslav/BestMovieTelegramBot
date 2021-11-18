@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using BestMovie.Bot.Controllers;
-using BestMovie.Entities;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -12,10 +10,7 @@ namespace BestMovie.Bot.View
 {
     public static class Handlers
     {
-        private static readonly MessageBuilder _messageBuilder = new MessageBuilder();
-        private static readonly GenreController _genreController = new GenreController();
-        private static readonly MovieController _movieController = new MovieController();
-        private static List<Genre> _genres;
+        private static readonly MessageController _messageController = new MessageController();
         
         public static Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
@@ -40,35 +35,27 @@ namespace BestMovie.Bot.View
 
 
             Console.WriteLine(Messages.ConsoleHandleMessage, textMessage, chatId);
-
             if (textMessage == Messages.Start.ToLower())
             {
                 var text = Messages.PleaseWait;
-                await _messageBuilder.SendMessage(botClient, chatId, text, cancellationToken);
-                _genres = await _genreController.GetGenres("movies");
-                await _messageBuilder.SendGenresByCategory(botClient, chatId, "movie", Messages.ChooseGenre, _genres,
-                    cancellationToken);
+                await _messageController.SendGenresByCategory(botClient, chatId, "movies", text, cancellationToken);
             }
             else if (textMessage == Messages.BotInfoRequest.ToLower())
             {
                 var text = Messages.BotInfoResponse;
                 var keyboard = Keyboards.GetMainKeyboard();
-                await _messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, keyboard);
+                await _messageController.SendMessage(botClient, chatId, text, cancellationToken, keyboard);
             }
-            else if (_genres != null && _genres.Exists(genre => genre.Name.ToLower().Equals(textMessage)))
+            else if (await _messageController.IsGenreExist(textMessage, "movies"))
             {
                 var text = Messages.MoviesIsLoading;
-                await _messageBuilder.SendMessage(botClient, chatId, text, cancellationToken);
-                
-                var genre = _genres.Find(g => g.Name.ToLower().Equals(textMessage))?.UrlPrefix;
-                var collection = await _movieController.GetMoviesByGenre(genre);
-                await _messageBuilder.SendMoviesByGenre(botClient, chatId, textMessage,
-                    collection, cancellationToken, Keyboards.GetMainKeyboard());
+                var keyboard = Keyboards.GetMainKeyboard();
+                await _messageController.SendMoviesByGenre(botClient, chatId, textMessage, "movies", text, cancellationToken, keyboard);
             }
             else
             {
                 var text = Messages.CantResolve;
-                await _messageBuilder.SendMessage(botClient, chatId, text, cancellationToken, Keyboards.GetMainKeyboard());
+                await _messageController.SendMessage(botClient, chatId, text, cancellationToken, Keyboards.GetMainKeyboard());
             }
         }
     }

@@ -14,7 +14,7 @@ namespace BestMovie.Bot.View
     public class MessageBuilder
     {
         private readonly int _maxImagesCount = 10;
-        public async Task SendMessage(ITelegramBotClient botClient, long chatId,
+        public async Task<Message> SendMessage(ITelegramBotClient botClient, long chatId,
             string text, CancellationToken cancellationToken, ReplyKeyboardMarkup keyboard = null)
         {
             //keyboard ??= Keyboards.GetMainKeyboard();
@@ -23,6 +23,7 @@ namespace BestMovie.Bot.View
                 text:   text, 
                 cancellationToken: cancellationToken,
                 replyMarkup: keyboard);
+            return result;
         }
         
         public async Task SendGenresByCategory(ITelegramBotClient botClient, long chatId, string category,
@@ -62,7 +63,7 @@ namespace BestMovie.Bot.View
             foreach (var item in collection)
             {
                 result.Append($"{item.Position}) ");
-                result.Append($"{item.Movie.Name} \n");
+                result.Append($"{item.Movie.Name} ({item.Movie.DateCreated})\n");
             }
 
             return result.ToString();

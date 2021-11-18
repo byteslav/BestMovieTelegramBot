@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
+using BestMovie.Entities;
 using BestMovie.Parser.HtmlLoader;
 using BestMovie.Parser.Interfaces;
 using HtmlParser = AngleSharp.Html.Parser.HtmlParser;
@@ -11,6 +13,8 @@ namespace BestMovie.BLL.Services
         private readonly IParser<T> _parser;
         private readonly IGenreParserSettings _genreParserSettings;
         private readonly HtmlGenreLoader _genreLoader;
+        
+        public Task<T> Genres => GetGenresCollection();
 
         public GenreService(IParser<T> parser, IGenreParserSettings genreParserSettings)
         {
