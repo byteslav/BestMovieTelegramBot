@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
 using BestMovie.Entities;
@@ -8,22 +9,23 @@ using HtmlParser = AngleSharp.Html.Parser.HtmlParser;
 
 namespace BestMovie.BLL.Services
 {
-    public class GenreService<T> where T: class
+    public class GenreService
     {
-        private readonly IParser<T> _parser;
+        public IEnumerable<Genre> Genres;
+        private readonly IParser<IEnumerable<Genre>> _parser;
         private readonly IGenreParserSettings _genreParserSettings;
         private readonly HtmlGenreLoader _genreLoader;
-        
-        public Task<T> Genres => GetGenresCollection();
 
-        public GenreService(IParser<T> parser, IGenreParserSettings genreParserSettings)
+        public GenreService(IParser<IEnumerable<Genre>> parser, IGenreParserSettings genreParserSettings)
         {
             _parser = parser;
             _genreParserSettings = genreParserSettings;
             _genreLoader = new HtmlGenreLoader(genreParserSettings);
+
+            Genres = GetGenresCollection().Result;
         }
 
-        public async Task<T> GetGenresCollection()
+        private async Task<IEnumerable<Genre>> GetGenresCollection()
         {
             var source = await _genreLoader.GetSourceByCategory(_genreParserSettings.Category);
             var htmlParser = new HtmlParser();
