@@ -11,10 +11,11 @@ namespace BestMovie.BLL.Services
 {
     public class GenreService
     {
-        public IEnumerable<Genre> Genres;
         private readonly IParser<IEnumerable<Genre>> _parser;
         private readonly IGenreParserSettings _genreParserSettings;
         private readonly HtmlGenreLoader _genreLoader;
+        
+        public IEnumerable<Genre> Genres { get; }
 
         public GenreService(IParser<IEnumerable<Genre>> parser, IGenreParserSettings genreParserSettings)
         {
@@ -34,6 +35,20 @@ namespace BestMovie.BLL.Services
             var result = _parser.Parse(document);
 
             return result;
+        }
+        
+        public string GetGenreUrl(string genre)
+        {
+            var genreList = Genres.ToList();
+            var genreUrl = genreList.Find(g => g.Name.ToLower().Equals(genre))?.UrlPrefix;
+
+            return genreUrl;
+        }
+        
+        public bool IsGenreExist(string genreName)
+        {
+            var genresList = Genres.ToList();
+            return genresList.Exists(genre => genre.Name.ToLower().Equals(genreName));
         }
     }
 }

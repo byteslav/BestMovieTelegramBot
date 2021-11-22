@@ -37,8 +37,7 @@ namespace BestMovie.Bot.View
             Console.WriteLine(Messages.ConsoleHandleMessage, textMessage, chatId);
             if (textMessage == Messages.Start.ToLower())
             {
-                var text = Messages.PleaseWait;
-                await _messageController.SendGenresByCategory(botClient, chatId, "movies", text, cancellationToken);
+                await _messageController.SendGenresByCategory(botClient, chatId, cancellationToken);
             }
             else if (textMessage == Messages.BotInfoRequest.ToLower())
             {
@@ -46,11 +45,10 @@ namespace BestMovie.Bot.View
                 var keyboard = Keyboards.GetMainKeyboard();
                 await _messageController.SendMessage(botClient, chatId, text, cancellationToken, keyboard);
             }
-            else if (await _messageController.IsGenreExist(textMessage, "movies"))
+            else if (_messageController.IsGenreExist(textMessage))
             {
-                var text = Messages.MoviesIsLoading;
                 var keyboard = Keyboards.GetMainKeyboard();
-                await _messageController.SendMoviesByGenre(botClient, chatId, textMessage, "movies", text, cancellationToken, keyboard);
+                await _messageController.SendMoviesByGenre(botClient, chatId, textMessage, cancellationToken, keyboard);
             }
             else
             {

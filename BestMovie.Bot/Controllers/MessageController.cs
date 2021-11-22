@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using BestMovie.BLL;
 using BestMovie.BLL.Services;
@@ -30,25 +29,24 @@ namespace BestMovie.Bot.Controllers
                 replyMarkup: keyboard);
         }
         
-        public async Task SendGenresByCategory(ITelegramBotClient botClient, long chatId, string category,
-            string text, CancellationToken cancellationToken)
+        public async Task SendGenresByCategory(ITelegramBotClient botClient, long chatId,
+            CancellationToken cancellationToken)
         {
-            
-            await SendMessage(botClient, chatId, text, cancellationToken);
+            await SendMessage(botClient, chatId, Messages.PleaseWait, cancellationToken);
             
             var collection = _genreService.Genres;
             await botClient.SendTextMessageAsync(
                 chatId: chatId,
-                text: Utility.ConvertCollectionGenreMessage(collection, Messages.PleaseWait),
+                text: Utility.ConvertCollectionGenreMessage(collection, Messages.Genres),
                 cancellationToken: cancellationToken);
         }
         
-        public async Task SendMoviesByGenre(ITelegramBotClient botClient, long chatId, string genre, string category, string text,
+        public async Task SendMoviesByGenre(ITelegramBotClient botClient, long chatId, string genre,
              CancellationToken cancellationToken, ReplyKeyboardMarkup keyboard, int maxImagesCount = 10)
         {
-            await SendMessage(botClient, chatId, text, cancellationToken);
+            await SendMessage(botClient, chatId, Messages.MoviesIsLoading, cancellationToken);
             
-            var genreUrl = await GetGenreUrl(genre, category);
+            var genreUrl = _genreService.GetGenreUrl(genre);
             var movieService = new MovieService(
                 new MovieParser(),
                 new MovieParserSettings(genreUrl));
@@ -65,18 +63,9 @@ namespace BestMovie.Bot.Controllers
             await botClient.SendMediaGroupAsync(chatId, messageAlbum, cancellationToken: cancellationToken);
         }
         
-        public async Task<bool> IsGenreExist(string genreName, string category)
+        public bool IsGenreExist(string genreName)
         {
-            var genresList = _genreService.Genres.ToList();
-            return genresList.Exists(genre => genre.Name.ToLower().Equals(genreName));
-        }
-
-        private async Task<string> GetGenreUrl(string genre, string category)
-        {
-            var genreList = _genreService.Genres.ToList();
-            var genreUrl = genreList.Find(g => g.Name.ToLower().Equals(genre))?.UrlPrefix;
-
-            return genreUrl;
+            return _genreService.IsGenreExist(genreName);
         }
     }
 }

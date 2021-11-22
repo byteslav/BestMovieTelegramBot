@@ -48,4 +48,7 @@
     <data name="GenreIsNotAvaliable" xml:space="preserve">
         <value>Упс, этот список фильмов в данный момент недоступен</value>
     </data>
+    <data name="Genres" xml:space="preserve">
+        <value>Выберите интересующий вас жанр</value>
+    </data>
 </root>
